@@ -105,7 +105,40 @@ app.get("/seed_db",async(req,res)=>{
   }
 })
 
+async function fetchAllTracks(){
+  let tracks=await track.findAll()
+  return {tracks}
+}
 
+
+
+app.get("/tracks",async (req,res)=>{
+  try{
+    let response= await fetchAllTracks()
+    if(response.tracks.length===0){
+      return res.status(404).json({message:"No Tracks Found"})
+    }
+    return res.status(200).json(response);
+  }catch(err){
+    res.status(500).json({error:err.message})
+  }
+})
+async function fetchTrackById(id){
+ let trackData=await track.findOne({where:{id}});
+
+ return {track:trackData}
+}
+app.get("/tracks/details/:id",async(req,res)=>{
+  try{
+    let id=parseInt(req.params.id)
+    let result=await fetchTrackById(id);
+    console.log(result)
+
+    res.status(200).json(result)
+  }catch(err){
+    res.status(500).json({error:err.message});
+  }
+})
 
 app.use(express.static('static'));
 
