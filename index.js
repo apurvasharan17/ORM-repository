@@ -146,6 +146,22 @@ app.get('/', (req, res) => {
   res.sendFile(resolve(__dirname, 'pages/index.html'));
 });
 
+async function fetchTrackByArtist(artist){
+  let tracks=await track.findAll({where:{artist}})
+  return ({tracks:tracks})
+}
+app.get("/tracks/artist/:artist",async (req,res)=>{
+  try{
+    let artist=req.params.artist;
+    let result=await fetchTrackByArtist(artist)
+    if(result.tracks.length===0){
+      return res.status(404).json({message:"Track Not Found"})
+    }
+  }catch(err){
+    res.status(500).json({error:err.message});
+  }
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
