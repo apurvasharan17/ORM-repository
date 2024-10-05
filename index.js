@@ -147,7 +147,7 @@ app.get('/', (req, res) => {
 });
 
 async function fetchTrackByArtist(artist){
-  let tracks=await track.findAll({where:{artist}})
+  let tracks=await tracks.findAll({where:{artist}})
   return ({tracks:tracks})
 }
 app.get("/tracks/artist/:artist",async (req,res)=>{
@@ -157,6 +157,7 @@ app.get("/tracks/artist/:artist",async (req,res)=>{
     if(result.tracks.length===0){
       return res.status(404).json({message:"Track Not Found"})
     }
+    return res.status(200).json(result)
   }catch(err){
     res.status(500).json({error:err.message});
   }
