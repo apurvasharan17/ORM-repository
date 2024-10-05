@@ -147,7 +147,7 @@ app.get('/', (req, res) => {
 });
 
 async function fetchTrackByArtist(artist){
-  let tracks=await tracks.findAll({where:{artist}})
+  let tracks=await track.findAll({where:{artist}})
   return ({tracks:tracks})
 }
 app.get("/tracks/artist/:artist",async (req,res)=>{
@@ -162,6 +162,33 @@ app.get("/tracks/artist/:artist",async (req,res)=>{
     res.status(500).json({error:err.message});
   }
 })
+async function sortTrackByReleaseYear(orderedData){
+  let sortedTrack=await track.findAll({order:[["release_year",orderedData]]})
+  return {tracks:sortedTrack};
+}
+app.get("/tracks/sort/release_year",async (req,res)=>{
+  try{
+    let orderedData=req.query.orderedData
+    let result=await sortTrackByReleaseYear(orderedData)
+    if(result.tracks.length===0){
+      return res.status(404).json({message:"No Tracks FOund"})
+    }
+    return res.status(200).json({result})
+  }
+  catch(err){
+    return res.status(500).json({error:err.message});
+  }
+})
+
+
+
+
+
+
+
+
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
